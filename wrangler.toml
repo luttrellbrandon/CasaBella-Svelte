@@ -1,0 +1,6 @@
+# Cloudflare Pages configuration
+# Build command: npm run build
+# Build output directory: .svelte-kit/cloudflare
+name = "casabella-svelte"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = ".svelte-kit/cloudflare"
