@@ -86,7 +86,7 @@
           >
             {data.site?.title ?? 'Casa Bella'}
           </text>
-        </svg>
+        </svg> 
       </div>
     </div> 
   </section>
