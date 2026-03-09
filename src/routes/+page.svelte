@@ -92,7 +92,7 @@
   </section>
 
   <!-- Community -->
-  <section
+  <section 
     id="community"
     class="relative overflow-hidden py-12 px-4 scroll-mt-16 bg-center"
   >
