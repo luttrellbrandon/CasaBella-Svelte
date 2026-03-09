@@ -1,2 +1,73 @@
 @import 'tailwindcss';
 @plugin 'daisyui';
+
+/* Site-wide readable body font (script font kept for hero + Our Community only) */
+body {
+  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  background-image: url('/images/background_black1.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center center;
+  background-color: #050505;
+}
+
+@font-face {
+  font-family: 'Pinyon Script';
+  src: url('/PinyonScript-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Adediala';
+  src: url('/Adediala-L3rvn.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Hero signature: SVG stroke animation that looks like handwriting */
+.hero-signature {
+  display: inline-block;
+}
+
+.hero-signature text {
+  fill: transparent;
+  stroke: #ffffff;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: hero-signature-draw 3.5s ease-out 0.6s forwards,
+    hero-signature-fill 1.8s ease-out 2.4s forwards;
+}
+
+@keyframes hero-signature-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hero-signature-fill {
+  0% {
+    fill: transparent;
+  }
+  100% {
+    fill: #ffffff;
+  }
+}
+
+/* Hero title: layered shadows for a fancy, classy look */
+.hero-title {
+  text-shadow:
+    0 0 30px rgba(255, 255, 255, 0.25),
+    0 0 60px rgba(255, 255, 255, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.25);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.15);
+  paint-order: stroke fill;
+}
