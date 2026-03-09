@@ -69,4 +69,4 @@
   bind:this={mapEl}
   class="h-full w-full"
   style="filter: saturate(0.4) brightness(1.15) contrast(0.98);"
-/>
+></div>
