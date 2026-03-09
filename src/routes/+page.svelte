@@ -88,7 +88,7 @@
           </text>
         </svg>
       </div>
-    </div>
+    </div> 
   </section>
 
   <!-- Community -->
