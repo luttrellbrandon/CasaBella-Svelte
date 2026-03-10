@@ -24,6 +24,9 @@
   const carouselIndexRef = { current: 0 };
   const CAROUSEL_INTERVAL_MS = 5000;
 
+  /** Start hero signature animation only after font is loaded so iOS paints full glyphs (C/B/L). */
+  let signatureReady = $state(false);
+
   onMount(() => {
     const heroId = setInterval(() => {
       showFirst = !showFirst;
@@ -32,6 +35,17 @@
       carouselIndexRef.current = (carouselIndexRef.current + 1) % CAROUSEL_IMAGES.length;
       carouselIndex = carouselIndexRef.current;
     }, CAROUSEL_INTERVAL_MS);
+
+    const startSignature = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          signatureReady = true;
+        });
+      });
+    };
+    document.fonts.ready.then(startSignature);
+    setTimeout(startSignature, 800);
+
     return () => {
       clearInterval(heroId);
       clearInterval(carouselId);
@@ -63,7 +77,7 @@
 
 <main class="flex-1">
   <!-- Hero: background images fade on timer, overlay, title and nav buttons -->
-  <section class="relative h-screen w-full min-h-screen bg-base-300 flex items-center justify-center overflow-hidden">
+  <section class="relative min-h-screen w-full bg-base-300 flex items-center justify-center overflow-x-hidden overflow-y-visible">
     <img
       src="/images/hero2.jpg"
       alt="Casa Bella community at dusk — fountain and pond"
@@ -78,17 +92,21 @@
     />
     <div class="absolute inset-0 bg-black/50" aria-hidden="true"></div>
     <div class="absolute bottom-0 left-0 right-0 z-[5] h-40 bg-gradient-to-t from-black via-black/80 to-transparent" aria-hidden="true"></div>
-    <div class="relative z-10 flex flex-col items-center justify-center gap-6 px-4 py-12 text-center">
-      <div class="hero-signature" aria-label={data.site?.title ?? 'Casa Bella'}>
+    <div
+      class="relative z-10 flex flex-col items-center justify-center gap-6 px-4 pt-[env(safe-area-inset-top)] py-12 pb-16 text-center min-h-screen"
+      class:hero-signature-ready={signatureReady}
+    >
+      <div class="hero-signature flex-[0_0_auto]" aria-label={data.site?.title ?? 'Casa Bella'}>
         <svg
-          viewBox="0 0 800 200"
-          class="w-[22rem] sm:w-[28rem] md:w-[34rem] lg:w-[40rem]"
+          viewBox="-50 -100 900 400"
+          class="w-[22rem] sm:w-[28rem] md:w-[34rem] lg:w-[40rem] max-w-[90vw]"
+          style="overflow: visible;"
           role="img"
           aria-hidden="true"
         >
           <text
             x="50%"
-            y="55%"
+            y="52%"
             text-anchor="middle"
             dominant-baseline="middle"
             style="font-family: 'Adediala', 'Pinyon Script', cursive; font-size: 180px; letter-spacing: 0.02em;"

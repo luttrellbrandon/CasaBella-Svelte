@@ -3,7 +3,8 @@
   import Footer from '$lib/components/Footer.svelte';
 </script>
 
-<div class="flex min-h-screen flex-col">
+<div class="site-background" aria-hidden="true"></div>
+<div class="flex min-h-screen flex-col relative">
   <slot />
   <Footer />
 </div>

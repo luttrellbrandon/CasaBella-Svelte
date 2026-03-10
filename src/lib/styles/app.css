@@ -2,13 +2,28 @@
 @plugin 'daisyui';
 
 /* Site-wide readable body font (script font kept for hero + Our Community only) */
+html {
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  min-height: 100%;
+  min-height: 100dvh;
+  background-color: #050505;
+}
+
+/* Fixed viewport-sized layer so background scales with device on all browsers (including iOS) */
+.site-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   background-image: url('/images/background_black1.png');
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
   background-position: center center;
+  background-size: cover;
+  -webkit-background-size: cover;
   background-color: #050505;
 }
 
@@ -25,12 +40,21 @@ body {
   src: url('/Adediala-L3rvn.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
-/* Hero signature: SVG stroke animation that looks like handwriting */
+/* Hero signature: SVG stroke animation that looks like handwriting.
+   SVG uses fixed aspect-ratio so iOS reserves correct space on first paint.
+   Animation starts only when .hero-signature-ready is set (after font load). */
 .hero-signature {
   display: inline-block;
+  overflow: visible;
+}
+
+.hero-signature svg {
+  overflow: visible;
+  /* Force layout from viewBox (9:4) so bounds are correct before stroke draws */
+  aspect-ratio: 9 / 4;
 }
 
 .hero-signature text {
@@ -41,6 +65,10 @@ body {
   stroke-linejoin: round;
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
+  /* No animation until .hero-signature-ready – avoids wrong first-paint bounds on iOS */
+}
+
+.hero-signature-ready .hero-signature text {
   animation: hero-signature-draw 3.5s ease-out 0.6s forwards,
     hero-signature-fill 1.8s ease-out 2.4s forwards;
 }
