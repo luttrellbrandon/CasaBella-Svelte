@@ -12,5 +12,8 @@ export const site = {
       friday: 'Friday 8:30–12:00pm'
     }
   },
-  copyright: '© 2026 Casa Bella HOA. All Rights Reserved.'
+  copyright: '© 2026 Casa Bella HOA. All Rights Reserved.',
+  social: {
+    facebook: 'https://www.facebook.com/share/g/177YU5HNXZ/?mibextid=wwXIfr'
+  }
 } as const;

@@ -47,6 +47,15 @@
     carouselIndexRef.current = carouselIndex;
   }
 
+  const events = $derived(data.upcomingEvents ?? []);
+  let eventsCarouselIndex = $state(0);
+  function eventsCarouselPrev() {
+    eventsCarouselIndex = (eventsCarouselIndex - 1 + events.length) % events.length;
+  }
+  function eventsCarouselNext() {
+    eventsCarouselIndex = (eventsCarouselIndex + 1) % events.length;
+  }
+
   function formatPrice(n: number) {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
   }
@@ -56,14 +65,14 @@
   <!-- Hero: background images fade on timer, overlay, title and nav buttons -->
   <section class="relative h-screen w-full min-h-screen bg-base-300 flex items-center justify-center overflow-hidden">
     <img
-      src="/images/hero.jpg"
-      alt="Casa Bella community — lake, fountain, and residential neighborhood"
+      src="/images/hero2.jpg"
+      alt="Casa Bella community at dusk — fountain and pond"
       class="absolute inset-0 h-full w-full object-cover transition-opacity duration-[3000ms] ease-in-out {showFirst ? 'opacity-100' : 'opacity-0'}"
       aria-hidden="{!showFirst}"
     />
     <img
-      src="/images/hero2.jpg"
-      alt="Casa Bella community at dusk — fountain and pond"
+      src="/images/hero.jpg"
+      alt="Casa Bella community — lake, fountain, and residential neighborhood"
       class="absolute inset-0 h-full w-full object-cover transition-opacity duration-[3000ms] ease-in-out {showFirst ? 'opacity-0' : 'opacity-100'}"
       aria-hidden="{showFirst}"
     />
@@ -340,78 +349,230 @@
     </div>
   </section>
 
-  <!-- HOA Documents & Forms -->
-  <section class="py-12 px-4">
-    <div class="container mx-auto max-w-4xl">
-      <h2 class="text-4xl font-normal mb-6" style="font-family: 'Adediala', 'Pinyon Script', cursive;">HOA Documents &amp; Forms</h2>
-      <div class="space-y-4">
-        {#each data.documents ?? [] as doc}
-          <div class="card bg-base-200 shadow">
-            <div class="card-body">
-              {#if doc.category}
-                <p class="text-sm text-base-content/70">{doc.category}</p>
-              {/if}
-              <a href={doc.href} class="link link-hover font-medium">{doc.title}</a>
-              {#if doc.description}
-                <p class="text-sm">{doc.description}</p>
+  <!-- Upcoming Events -->
+  {#if events.length > 0}
+    <section class="relative overflow-hidden py-12 px-4 bg-center text-white">
+      <div class="container relative z-10 mx-auto max-w-4xl">
+        <div
+          class="overflow-hidden rounded-3xl border-2 bg-black/70 shadow-[0_18px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl"
+          style="border-color: rgba(240, 221, 174, 0.35);"
+        >
+          <div
+            class="border-b bg-black/60 px-6 py-2 md:px-8 md:py-3 backdrop-blur-xl"
+            style="border-color: rgba(240, 221, 174, 0.35);"
+          >
+            <h2
+              class="text-6xl font-normal sm:text-7xl md:text-8xl text-white"
+              style="font-family: 'Adediala', 'Pinyon Script', cursive;">
+              Upcoming Events
+            </h2>
+          </div>
+          <div class="p-8 text-white">
+            <div class="relative overflow-hidden rounded-lg bg-black/30">
+              {#each events as event, i}
+                <div
+                  class="transition-opacity duration-300 ease-in-out {i === eventsCarouselIndex ? 'opacity-100 block' : 'opacity-0 hidden'}"
+                  role="tabpanel"
+                  aria-hidden={i !== eventsCarouselIndex}
+                >
+                  <div class="rounded-xl border border-white/20 bg-black/40 p-6 sm:p-8">
+                    <p class="text-sm font-medium text-[#f0ddae]/90 uppercase tracking-wide">{event.date}</p>
+                    <h3 class="text-2xl font-bold text-white mt-1">{event.title}</h3>
+                    {#if event.location}
+                      <p class="text-white/80 mt-2 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-[#f0ddae]/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {event.location}
+                      </p>
+                    {/if}
+                    {#if event.description}
+                      <p class="text-white/90 mt-3">{event.description}</p>
+                    {/if}
+                  </div>
+                </div>
+              {/each}
+              <button
+                type="button"
+                class="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70 disabled:opacity-50"
+                aria-label="Previous event"
+                onclick={eventsCarouselPrev}
+                disabled={events.length <= 1}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70 disabled:opacity-50"
+                aria-label="Next event"
+                onclick={eventsCarouselNext}
+                disabled={events.length <= 1}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              {#if events.length > 1}
+                <div class="flex justify-center gap-2 pt-4">
+                  {#each events as _, i}
+                    <button
+                      type="button"
+                      class="h-2 w-2 rounded-full transition {i === eventsCarouselIndex ? 'bg-[#f0ddae] scale-125' : 'bg-white/50 hover:bg-white/80'}"
+                      aria-label="Go to event {i + 1}"
+                      onclick={() => { eventsCarouselIndex = i; }}
+                    ></button>
+                  {/each}
+                </div>
               {/if}
             </div>
           </div>
-        {/each}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  {/if}
 
-  <!-- HOA Links -->
-  <section class="py-12 px-4 bg-base-200">
-    <div class="container mx-auto max-w-4xl">
-      <h2 class="text-4xl font-normal mb-6" style="font-family: 'Adediala', 'Pinyon Script', cursive;">HOA Links</h2>
-      <div class="flex flex-wrap gap-4">
-        {#each data.links ?? [] as link}
-          <a href={link.href} class="btn btn-primary" target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
-            {link.title}
-          </a>
-        {/each}
+  <!-- HOA Documents & Forms -->
+  <section
+    class="relative overflow-hidden py-12 px-4 bg-center text-white"
+  >
+    <div class="container relative z-10 mx-auto max-w-4xl">
+      <div
+        class="overflow-hidden rounded-3xl border-2 bg-black/70 shadow-[0_18px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl"
+        style="border-color: rgba(240, 221, 174, 0.35);"
+      >
+        <div
+          class="border-b bg-black/60 px-6 py-2 md:px-8 md:py-3 backdrop-blur-xl"
+          style="border-color: rgba(240, 221, 174, 0.35);"
+        >
+          <h2
+            class="text-6xl font-normal sm:text-7xl md:text-8xl text-white"
+            style="font-family: 'Adediala', 'Pinyon Script', cursive;">
+            Documents &amp; Links
+          </h2>
+        </div>
+        <div class="p-8 text-white">
+          <p class="mb-6 text-white/90">
+            Official HOA documents and forms for Casa Bella residents. Download covenants, bylaws, and request forms below.
+          </p>
+          <div class="space-y-4">
+            {#each data.documents ?? [] as doc}
+              <a
+                href={doc.href}
+                class="flex flex-col gap-1 rounded-lg border border-white/20 bg-black/40 px-4 py-3 transition hover:border-[rgba(240,221,174,0.5)] hover:bg-black/50"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {#if doc.category}
+                  <span class="text-sm text-[#f0ddae]/90">{doc.category}</span>
+                {/if}
+                <span class="text-lg font-bold text-white">{doc.title}</span>
+                {#if doc.description}
+                  <span class="text-sm text-white/80">{doc.description}</span>
+                {/if}
+                <span class="mt-1 inline-flex items-center gap-1 text-base font-bold text-[#f0ddae]" aria-hidden="true">
+                  Download
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                </span>
+              </a>
+            {/each}
+          </div>
+
+          {#if data.site?.social?.facebook}
+            <div class="mt-8 border-t border-white/20 pt-6">
+              <p class="mb-3 text-sm font-medium text-[#f0ddae]/90">Community links</p>
+              <div class="flex flex-wrap gap-3">
+                <a
+                  href={data.site.social.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-black/40 px-4 py-2.5 text-white transition hover:border-[rgba(240,221,174,0.5)] hover:bg-black/50"
+                  aria-label="Visit our Facebook page"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  Facebook
+                </a>
+              </div>
+            </div>
+          {/if}
+        </div>
       </div>
-      {#each data.links ?? [] as link}
-        <p class="mt-2 text-sm text-base-content/70">{link.description}</p>
-      {/each}
     </div>
   </section>
 
   <!-- Board of Directors / Home Owners -->
-  <section id="home-owners" class="py-12 px-4 scroll-mt-16">
-    <div class="container mx-auto max-w-4xl">
-      <h2 class="text-4xl font-normal mb-6" style="font-family: 'Adediala', 'Pinyon Script', cursive;">Board of Directors</h2>
-      <div class="grid gap-4 sm:grid-cols-2">
-        {#each data.board ?? [] as member}
-          <div class="card bg-base-200 shadow">
-            <div class="card-body">
-              <h3 class="font-semibold text-primary">{member.role}</h3>
-              <p>{member.name}</p>
-            </div>
+  <section id="home-owners" class="relative overflow-hidden py-12 px-4 bg-center text-white scroll-mt-16">
+    <div class="container relative z-10 mx-auto max-w-4xl">
+      <div
+        class="overflow-hidden rounded-3xl border-2 bg-black/70 shadow-[0_18px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl"
+        style="border-color: rgba(240, 221, 174, 0.35);"
+      >
+        <div
+          class="border-b bg-black/60 px-6 py-2 md:px-8 md:py-3 backdrop-blur-xl"
+          style="border-color: rgba(240, 221, 174, 0.35);"
+        >
+          <h2
+            class="text-6xl font-normal sm:text-7xl md:text-8xl text-white"
+            style="font-family: 'Adediala', 'Pinyon Script', cursive;">
+            Board of Directors
+          </h2>
+        </div>
+        <div class="p-8 text-white">
+          <div class="grid gap-6 sm:grid-cols-2">
+            {#each data.board ?? [] as member}
+              <div class="flex items-center gap-4 rounded-xl border border-white/20 bg-black/40 p-4">
+                <figure class="shrink-0 h-20 w-20 sm:h-24 sm:w-24 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
+                  {#if member.image}
+                    <img
+                      src={member.image}
+                      alt=""
+                      class="h-full w-full object-cover"
+                    />
+                  {:else}
+                    <span class="text-2xl sm:text-3xl font-semibold text-white/50" aria-hidden="true">
+                      {member.name.split(/\s+/).slice(0, 2).map((n) => n[0]).join('')}
+                    </span>
+                  {/if}
+                </figure>
+                <div class="min-w-0">
+                  <h3 class="font-semibold text-[#f0ddae]">{member.role}</h3>
+                  <p class="font-medium text-white">{member.name}</p>
+                </div>
+              </div>
+            {/each}
           </div>
-        {/each}
+          <a href="mailto:board@casabellahoa.net" class="btn btn-outline border-[rgba(240,221,174,0.5)] text-white hover:bg-white/10 mt-6">Email the Board</a>
+        </div>
       </div>
-      <a href="mailto:board@casabellahoa.net" class="btn btn-outline mt-6">Email the Board</a>
     </div>
   </section>
 
   <!-- Meetings & Property Management -->
-  <section class="py-12 px-4 bg-base-200">
-    <div class="container mx-auto max-w-4xl">
-      <p class="mb-6 text-lg">{data.site?.meetingNote}</p>
-      {#if data.site?.propertyManagement}
-        <div class="card bg-base-100 shadow">
-          <div class="card-body">
-            <h3 class="card-title text-2xl font-normal" style="font-family: 'Adediala', 'Pinyon Script', cursive;">{data.site.propertyManagement.name} {data.site.propertyManagement.label}</h3>
-            <p>{data.site.propertyManagement.address}</p>
-            <p><a href="tel:+13217848011" class="link">{data.site.propertyManagement.phone}</a></p>
-            <p class="text-sm">{data.site.propertyManagement.hours.weekdays}</p>
-            <p class="text-sm">{data.site.propertyManagement.hours.friday}</p>
-          </div>
+  <section class="relative overflow-hidden py-12 px-4 bg-center text-white">
+    <div class="container relative z-10 mx-auto max-w-4xl">
+      <div
+        class="overflow-hidden rounded-3xl border-2 bg-black/70 shadow-[0_18px_40px_rgba(0,0,0,0.7)] backdrop-blur-xl"
+        style="border-color: rgba(240, 221, 174, 0.35);"
+      >
+        <div class="p-8 text-white">
+          <p class="mb-6 text-lg text-white/90">{data.site?.meetingNote}</p>
+          {#if data.site?.propertyManagement}
+            <div class="rounded-xl border border-white/20 bg-black/40 p-6">
+              <h3 class="text-2xl font-normal mb-3 text-white" style="font-family: 'Adediala', 'Pinyon Script', ">{data.site.propertyManagement.name} {data.site.propertyManagement.label}</h3>
+              <p class="text-white/90">{data.site.propertyManagement.address}</p>
+              <p><a href="tel:+13217848011" class="link text-[#f0ddae] hover:text-[#f0ddae]/80">{data.site.propertyManagement.phone}</a></p>
+              <p class="text-sm text-white/80 mt-2">{data.site.propertyManagement.hours.weekdays}</p>
+              <p class="text-sm text-white/80">{data.site.propertyManagement.hours.friday}</p>
+            </div>
+          {/if}
         </div>
-      {/if}
+      </div>
     </div>
   </section>
 </main>
